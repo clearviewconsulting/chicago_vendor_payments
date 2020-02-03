@@ -1,0 +1,53 @@
+---
+  title: "CVP - Analysis"
+  output:
+    flexdashboard::flex_dashboard:
+      theme: cosmo
+      orientation: columns
+      vertical_layout: scroll
+      navbar:
+        - { title: "Help", icon: "fa-life-ring", href: "https://cviewllc.com/contact-us/" }
+---
+        
+
+```{r imports, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+
+
+```
+
+
+```{r}
+X <- read.csv(url("https://data.cityofchicago.org/resource/s4vu-giwb.csv"))
+```
+
+
+# Initial data discoveries
+
+## Cashed 
+```{r}
+cashedCounted <- X %>% count(cashed)
+
+ggplot(cashedCounted, aes(x = cashed, y = n)) + geom_bar(stat = "identity")
+```
+
+Vendor's broken down
+================================
+```{r}
+vendorCount <- X %>% count(vendor_name) %>% arrange(desc(n))
+
+ggplot(head(vendorCount, 5), aes(x = vendor_name, y = n)) + geom_bar(stat = "identity") + scale_y_log10()
+
+```
+
+
+Amount by vendor
+=====================================
+```{r}
+vendorAmount <- X %>% group_by(vendor_name) %>% mutate(Sum = sum(amount)) 
+
+distVendors <- vendorAmount %>% select(Sum, vendor_name) %>% distinct()
+
+ggplot(distVendors, aes(x = vendor_name, y = Sum)) + geom_point() + scale_y_log10() + theme(axis.text.x = element_blank(), )
+```
