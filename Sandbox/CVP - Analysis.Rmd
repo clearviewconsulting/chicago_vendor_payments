@@ -5,8 +5,6 @@
       theme: cosmo
       orientation: columns
       vertical_layout: scroll
-      navbar:
-        - { title: "Help", icon: "fa-life-ring", href: "https://cviewllc.com/contact-us/" }
 ---
         
 
@@ -22,15 +20,55 @@ library(tidyverse)
 X <- read.csv(url("https://data.cityofchicago.org/resource/s4vu-giwb.csv"))
 ```
 
+```{js}
+$('.navbar-inverse').removeClass('navbar-inverse').addClass('navbar-default');
+```
+
+```{css}
+.basic {
+background-color: #cde6fa;
+    color:#72787d;
+}
+.foundational {
+background-color: #e6eaed;
+    color:#72787d;
+}
+.organizational {
+background-color: #c9e1ff;
+    color:#72787d;
+}
+.chart-title {
+background-color: #3b3b3b;
+    color:#ffffff;
+    font-size: medium;
+}
+h4 {
+  color:#99999;
+  font-size: large;
+  font-weight: bold;
+}
+```
+
+
+
+
+
 
 # Initial data discoveries
 
-## Cashed 
 ```{r}
 cashedCounted <- X %>% count(cashed)
 
 ggplot(cashedCounted, aes(x = cashed, y = n)) + geom_bar(stat = "identity")
 ```
+
+Graph 2
+-----------
+This is a test
+```{r}
+
+```
+
 
 Vendor's broken down
 ================================
@@ -45,9 +83,34 @@ ggplot(head(vendorCount, 5), aes(x = vendor_name, y = n)) + geom_bar(stat = "ide
 Amount by vendor
 =====================================
 ```{r}
-vendorAmount <- X %>% group_by(vendor_name) %>% mutate(Sum = sum(amount)) 
+vendorAmount <- X %>%
+  group_by(vendor_name) %>% 
+  mutate(Sum = sum(amount)) 
 
-distVendors <- vendorAmount %>% select(Sum, vendor_name) %>% distinct()
+distVendors <- vendorAmount %>%
+  select(Sum, vendor_name) %>%
+  distinct()
 
 ggplot(distVendors, aes(x = vendor_name, y = Sum)) + geom_point() + scale_y_log10() + theme(axis.text.x = element_blank(), )
 ```
+
+Amount by Vendor - Top 10
+-------------------------
+```{r}
+vendorAmountTT <- vendorAmount %>% 
+  select(Sum, vendor_name) %>% 
+  distinct() %>% 
+  arrange(desc(Sum)) %>% 
+  head(10)
+  
+
+ggplot(vendorAmountTT, aes(x = vendor_name, y = Sum)) + geom_point() + theme(axis.text.x = element_blank(), )
+```
+
+
+
+
+
+
+
+
